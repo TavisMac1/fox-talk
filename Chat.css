@@ -1,0 +1,17 @@
+body {
+    background-color: rgb(28, 30, 44);
+  }
+
+  .msg {
+    position: absolute;
+    bottom: 10px;
+  }
+
+  #textchamber {
+    color: white; 
+    border: 2px solid white; 
+    border-radius: 5px; 
+    padding: 3px; 
+    overflow: scroll;
+    height: 300px;
+  }
