@@ -10,26 +10,29 @@ if (!$conn) die("Connection failed: " . mysqli_connect_error());
 //Create a database table
 $sql = "CREATE TABLE IF NOT EXISTS messages (
     users_id int(11) NOT NULL AUTO_INCREMENT,
-    msg varchar(100) NOT NULL, 
+    msg varchar(100) NOT NULL,
+    users_name varchar(20) NOT NULL, 
     PRIMARY KEY (users_id)) CHARSET=utf8mb4";
 
 //run query
 mysqli_query($conn, $sql);
 
 if (isset($_POST['submit'])) {
+
     $messageAnswer = $_POST['msg'];
-    
+    $userName = $_POST['name'];
     //echo "<script type='text/javascript'>alert('$messageAnswer');</script>";
 
-    if ($messageAnswer != "") {
-        $sql = "INSERT INTO messages (msg) VALUES (
-                '$messageAnswer'
+    if ($messageAnswer != "" && $userName != "") {
+        $sql = "INSERT INTO messages (msg, users_name) VALUES (
+                '$messageAnswer', '$userName'
         )";
         mysqli_query($conn, $sql);
     }
 
     //run query on all records from database store in records variable
-    $records = mysqli_query($conn,"SELECT * FROM messages");
+    $records = mysqli_query($conn,"SELECT * FROM messages WHERE users_name = '$userName'");
+    $records2 = mysqli_query($conn,"SELECT * FROM messages WHERE users_name != '$userName'");
 }
 
 ?>
@@ -60,9 +63,18 @@ if (isset($_POST['submit'])) {
         while($data = mysqli_fetch_array($records))
         {
         ?>
-            <span class="label label-primary .text-primary" style="color: white; border-bottom: 3px solid black; border-opacity: 5px; display: block;">
-                <?php echo($data['msg']); ?>
+            <span class="label label-primary .text-primary" style="color: darkslategrey; border-bottom: 1px solid black; display: block;">
+                <?php echo($data['users_name']); echo(": "); echo($data['msg']); ?>
             </span>
+            <?php 
+                while($data = mysqli_fetch_array($records2)) {
+                ?>    
+                     <span class="label label-primary .text-primary" style="color: darkslategrey; border-bottom: 1px solid black; display: block;">
+                         <?php echo($data['users_name']); echo(": "); echo($data['msg']); ?>
+                     </span>
+                <?php
+                }
+                ?>
         <?php
         }
         ?>
@@ -70,6 +82,7 @@ if (isset($_POST['submit'])) {
 
     <div class="form-group">
         <form class="msg" action="ChatBase.php" method="POST">
+            <input class="form-control" type="text" value="User name" name="name" style="width: 200px; float: left;"/>
             <input class="form-control" type="text" value="" name="msg" style="width: 500px; float: left;"/>
             <input class="form-control" type="submit" name="submit" value="Send" style="width: 100px; background-color:whitesmoke; float: left; color:darkslategrey"/>
         </form>
