@@ -23,20 +23,34 @@ if (isset($_POST['submit'])) {
     $userName = $_POST['name'];
     $errorCount = 0;
     $noTxtErr = "<div class='alert alert-danger' role='alert'>Please enter a user name and message! </div>";
+    $txtLng = "<div class='alert alert-danger' role='alert'> Message must be less than 100 characters! </div>";
     //echo "<script type='text/javascript'>alert('$messageAnswer');</script>";
 
-    if ($messageAnswer != "" && $userName != "") {
-        $sql = "INSERT INTO messages (msg, users_name) VALUES (
-                '$messageAnswer', '$userName'
-        )";
-        mysqli_query($conn, $sql);
-    } else {
-        $errorCount = 1;
+    if (strlen($messageAnswer) < 101) {
+        if (!empty($messageAnswer) && !empty($userName)) {
+            $sql = "INSERT INTO messages (msg, users_name) VALUES (
+                    '$messageAnswer', '$userName'
+            )";
+            mysqli_query($conn, $sql);
+        } else {
+            $errorCount = 1;
+        }
     }
 
     //run query on all records from database store in records variable
     $records = mysqli_query($conn,"SELECT * FROM messages WHERE users_name = '$userName'");
     $records2 = mysqli_query($conn,"SELECT * FROM messages WHERE users_name != '$userName'");
+}
+
+//deletion of message
+if (isset($_POST['delete'])) {
+    $uIDo = 0;
+    $delMsg = "<div class='alert alert-primary' role='alert'> Message deleted </div>";
+   // echo($uIDo);
+
+    $sql = "DELETE * FROM messages WHERE users_id = '$uIDo'";
+    mysqli_query($conn, $sql);
+    
 }
 
 ?>
@@ -55,32 +69,48 @@ if (isset($_POST['submit'])) {
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;400&display=swap" rel="stylesheet">
+
     <div class="header">
         <h1 class="jumbotron">
-            Tavis messaging app
+            tavis-chat
         </h1>
     </div>
     <div>
         <?php 
             if ($errorCount > 0) {
                 echo($noTxtErr);  
+            } else if (strlen($messageAnswer) > 100) {
+                echo($txtLng);
             }
         ?>
     </div>
 
     <div id="textchamber" class="container">
         <?php
+        //your messages
         while($data = mysqli_fetch_array($records))
         {
         ?>
-            <span class="label label-primary .text-primary" style="color: darkslategrey; border-bottom: 1px solid black; display: block;">
+            <span class="label label-primary .text-primary" style="color: dimgrey; border-bottom: 1px solid black; display: block; font-family: 'Roboto Mono', monospace;">
                 <?php echo($data['users_name']); echo(": "); echo($data['msg']); ?>
-            </span>
+
+                <form action="index.php" method="POST">
+                    <input value="<?php  echo($data['users_id']);   ?>" type="submit" class="btn btn-danger" name="delete"
+                        <?php 
+                            $uIDo = $data['users_id'];
+                        ?>
+                    />
+                </form>
+            </span> 
+            
             <?php 
+            //their messages
                 while($data = mysqli_fetch_array($records2)) {
                 ?>    
-                     <span class="label label-primary .text-primary" style="color: darkslategrey; border-bottom: 1px solid black; display: block;">
+                     <span class="label label-primary .text-primary" style="color:dimgrey; border-bottom: 1px solid black; display: block; font-family: 'Roboto Mono', monospace;">
                          <?php echo($data['users_name']); echo(": "); echo($data['msg']); ?>
                      </span>
                 <?php
