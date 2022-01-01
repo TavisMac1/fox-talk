@@ -21,6 +21,8 @@ if (isset($_POST['submit'])) {
 
     $messageAnswer = $_POST['msg'];
     $userName = $_POST['name'];
+    $errorCount = 0;
+    $noTxtErr = "<div class='alert alert-danger' role='alert'>Please enter a user name and message! </div>";
     //echo "<script type='text/javascript'>alert('$messageAnswer');</script>";
 
     if ($messageAnswer != "" && $userName != "") {
@@ -28,6 +30,8 @@ if (isset($_POST['submit'])) {
                 '$messageAnswer', '$userName'
         )";
         mysqli_query($conn, $sql);
+    } else {
+        $errorCount = 1;
     }
 
     //run query on all records from database store in records variable
@@ -57,6 +61,13 @@ if (isset($_POST['submit'])) {
             Tavis messaging app
         </h1>
     </div>
+    <div>
+        <?php 
+            if ($errorCount > 0) {
+                echo($noTxtErr);  
+            }
+        ?>
+    </div>
 
     <div id="textchamber" class="container">
         <?php
@@ -81,8 +92,8 @@ if (isset($_POST['submit'])) {
     </div>
 
     <div class="form-group">
-        <form class="msg" action="ChatBase.php" method="POST">
-            <input class="form-control" type="text" value="User name" name="name" style="width: 200px; float: left;"/>
+        <form class="msg" action="index.php" method="POST">
+            <input class="form-control" type="text" value="<?php echo $userName; ?>" placeholder="User Name" name="name" style="width: 200px; float: left;"/>
             <input class="form-control" type="text" value="" name="msg" style="width: 500px; float: left;"/>
             <input class="form-control" type="submit" name="submit" value="Send" style="width: 100px; background-color:whitesmoke; float: left; color:darkslategrey"/>
         </form>
