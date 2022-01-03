@@ -1,6 +1,3 @@
-<?php
-
-$db_host = "localhost";
-$db_user = "root";
-$db_pass = "";
-$db_name = "tavis_chat";
+*
+DB info here, removed on Github - tavis
+*
