@@ -19,11 +19,12 @@ mysqli_query($conn, $sql);
 
 if (isset($_POST['submit'])) {
 
-    $messageAnswer = $_POST['msg'];
-    $userName = $_POST['name'];
+    $messageAnswer = mysqli_real_escape_string($conn, $_POST['msg']);
+    $userName = mysqli_real_escape_string($conn, $_POST['name']);
     $errorCount = 0;
     $noTxtErr = "<div class='alert alert-danger' role='alert'>Please enter a user name and message! </div>";
     $txtLng = "<div class='alert alert-danger' role='alert'> Message must be less than 100 characters! </div>";
+    $dbFail = "<div class='alert alert-danger' role='alert'> Insertion to database failed, try again... </div>";
     //echo "<script type='text/javascript'>alert('$messageAnswer');</script>";
 
     if (strlen($messageAnswer) < 101) {
@@ -37,20 +38,22 @@ if (isset($_POST['submit'])) {
         }
     }
 
-    //run query on all records from database store in records variable
-    $records = mysqli_query($conn,"SELECT * FROM messages WHERE users_name = '$userName'");
-    $records2 = mysqli_query($conn,"SELECT * FROM messages WHERE users_name != '$userName'");
-}
+       //your messages
+      //run query on all records from database store in records variable
+        $recordsCheck = mysqli_query($conn,"SELECT * FROM messages WHERE users_name=?");
+        $stmt = mysqli_stmt_init($conn);
 
-//deletion of message
-if (isset($_POST['delete'])) {
-    $uIDo = 0;
-    $delMsg = "<div class='alert alert-primary' role='alert'> Message deleted </div>";
-   // echo($uIDo);
+        if (!mysqli_stmt_prepare($stmt, $records)) {
+            $errorCount = 2;
+        } else {
+            mysqli_stmt_bind_param($stmt, "s", $userName);
+            mysqli_stmt_execute($stmt);
+            $records = mysqli_stmt_get_result($stmt);
+            echo("records 1 succeeded");
+        }
 
-    $sql = "DELETE * FROM messages WHERE users_id = '$uIDo'";
-    mysqli_query($conn, $sql);
-    
+        //their messages
+        $records2 = mysqli_query($conn,"SELECT * FROM messages WHERE users_name != '$userName'");
 }
 
 ?>
@@ -80,9 +83,13 @@ if (isset($_POST['delete'])) {
     </div>
     <div>
         <?php 
-            if ($errorCount > 0) {
+            if ($errorCount == 1) {
                 echo($noTxtErr);  
-            } else if (strlen($messageAnswer) > 100) {
+            } else if ($errorCount == 2) {
+                echo($dbFail);
+            }
+
+            if (strlen($messageAnswer) > 100) {
                 echo($txtLng);
             }
         ?>
@@ -90,24 +97,23 @@ if (isset($_POST['delete'])) {
 
     <div id="textchamber" class="container">
         <?php
-        //your messages
-        while($data = mysqli_fetch_array($records))
-        {
-        ?>
-            <span class="label label-primary .text-primary" style="color: dimgrey; border-bottom: 1px solid black; display: block; font-family: 'Roboto Mono', monospace;">
-                <?php echo($data['users_name']); echo(": "); echo($data['msg']); ?>
+            //your messages
+            while($data = mysqli_fetch_array($records))
+            {
+            ?>
+                <span class="label label-primary .text-primary" style="color: dimgrey; border-bottom: 1px solid black; display: block; font-family: 'Roboto Mono', monospace;">
+                    <?php echo($data['users_name']); echo(": "); echo($data['msg']); ?>
 
-                <form action="index.php" method="POST">
-                    <input value="<?php  echo($data['users_id']);   ?>" type="submit" class="btn btn-danger" name="delete"
-                        <?php 
-                            $uIDo = $data['users_id'];
-                        ?>
-                    />
-                </form>
-            </span> 
+                    <form action="index.php" method="POST">
+                        <input value="<?php  echo($data['users_id']);   ?>" type="submit" class="btn btn-danger" name="delete"/>
+                            <?php 
+                                $uIDo = $data['users_id'];
+                            ?>
+                    </form>
+                </span> 
             
             <?php 
-            //their messages
+                //their messages
                 while($data = mysqli_fetch_array($records2)) {
                 ?>    
                      <span class="label label-primary .text-primary" style="color:dimgrey; border-bottom: 1px solid black; display: block; font-family: 'Roboto Mono', monospace;">
@@ -130,3 +136,16 @@ if (isset($_POST['delete'])) {
     </div>
 </body>
 </html>
+
+<?php 
+
+    if (isset($_POST['delete'])) {
+        $uIDo = $data['users_id'];
+        $delMsg = "<div class='alert alert-primary' role='alert'> Message deleted </div>";
+        // echo($uIDo);
+        
+        $sql = "DELETE * FROM messages WHERE users_id = '$uIDo'";
+        mysqli_query($conn, $sql); 
+    }
+
+?>
