@@ -12,7 +12,8 @@ if (!$conn) die("Connection failed: " . mysqli_connect_error());
 $sql = "CREATE TABLE IF NOT EXISTS messages (
     users_id int(11) NOT NULL AUTO_INCREMENT,
     msg varchar(100) NOT NULL,
-    users_name varchar(20) NOT NULL, 
+    users_name varchar(20) NOT NULL,
+    pass_key varchar(20) NOT NULL, 
     PRIMARY KEY (users_id)) CHARSET=utf8mb4";
 
 //run query
@@ -89,13 +90,13 @@ if (isset($_POST['submit'])) {
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="home.php">Home</a>
+                <a class="nav-link" href="home.html">Home</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="signup.php">Sign Up</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Login</a>
+                <a class="nav-link" href="login.php">Login</a>
             </li>
             </ul>
         </div>
@@ -123,7 +124,7 @@ if (isset($_POST['submit'])) {
     <div class="form-group">
         <form class="msg" action="index.php" method="POST">
             <input class="form-control" type="text" value="" placeholder="User Name" name="name" style="width: 500px; display: block; float: left;"/>
-            <input class="form-control" type="text" value="" placeholder="Password" name="pass" style="width: 500px; display: block; float: left;"/>
+            <input class="form-control" type="password" value="" placeholder="Password" name="pass" style="width: 500px; display: block; float: left;"/>
             <input class="form-control" type="submit" name="submit" value="Send" style="width: 100px; background-color:whitesmoke; display: block; float: left; color:darkslategrey"/>
         </form>
     </div>

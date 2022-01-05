@@ -1,6 +1,7 @@
 <?php
+/*
 ini_set('display_errors', 0);
-error_reporting(E_ERROR | E_WARNING | E_PARSE); 
+error_reporting(E_ERROR | E_WARNING | E_PARSE); */
 include("dbinfo.php"); 
 
 $conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
@@ -12,52 +13,68 @@ if (!$conn) die("Connection failed: " . mysqli_connect_error());
 $sql = "CREATE TABLE IF NOT EXISTS messages (
     users_id int(11) NOT NULL AUTO_INCREMENT,
     msg varchar(100) NOT NULL,
-    users_name varchar(20) NOT NULL, 
+    users_name varchar(20) NOT NULL,
+    pass_key varchar(20) NOT NULL, 
     PRIMARY KEY (users_id)) CHARSET=utf8mb4";
 
 //run query
 mysqli_query($conn, $sql);
 
 if (isset($_POST['submit'])) {
-
-    $messageAnswer = mysqli_real_escape_string($conn, $_POST['msg']);
-    $userName = mysqli_real_escape_string($conn, $_POST['name']);
+    
+    $name = mysqli_real_escape_string($conn, $_POST['name']);
+    $pass = mysqli_real_escape_string($conn, $_POST['pass']);
     $errorCount = 0;
+    $successCount = 0;
     $noTxtErr = "<div class='alert alert-danger' role='alert'>Please enter a user name! </div>";
+    $noPassErr = "<div class='alert alert-danger' role='alert'>Please enter a password! </div>";
     $invUn = "<div class='alert alert-danger' role='alert'>Invalid username! </div>";
+    $existUn = "<div class='alert alert-danger' role='alert'> Username already exists, login or create a new account! </div>";
     $dbFail = "<div class='alert alert-danger' role='alert'> Insertion to database failed, try again... </div>";
-    //echo "<script type='text/javascript'>alert('$messageAnswer');</script>";
 
-    if (strlen($messageAnswer) < 101) {
-        if (!empty($messageAnswer) && !empty($userName)) {
-            $sql = "INSERT INTO messages (msg, users_name) VALUES (
-                    '$messageAnswer', '$userName'
-            )";
-            mysqli_query($conn, $sql);
-        } else {
-            $errorCount = 1;
+    $creating = "<div class='alert alert-primary alert-dismissible fade show' role='alert'> Attempting to create account 
+            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+            <span aria-hidden='true'>&times;</span>
+            </button>
+        </div>";
+    $created = "<div class='alert alert-success alert-dismissible fade show' role='alert'> Account created 
+            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+            <span aria-hidden='true'>&times;</span>
+            </button>
+        </div>";
+    $createFail = "<div class='alert alert-danger alert-dismissible fade show' role='alert'> Account creation failed 
+            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+            <span aria-hidden='true'>&times;</span>
+            </button>
+        </div>";
+
+    echo($creating);
+    if (!empty($name) && !empty($pass)) {
+        $records = mysqli_query($conn,"SELECT users_name FROM messages");
+        while($data = mysqli_fetch_array($records))
+        {
+            if ($name == $data['users_name']) {
+                $errorCount = 3;
+            } else {
+                $creating = $created;
+            }
         }
+    }  else if (empty($name)) {
+        $errorCount = 1;
+        $creating = $createFail;
+    }  else if (empty($pass)) {
+        $errorCount = 2;
+        $creating = $createFail;
     }
 
-       //your messages
-      //run query on all records from database store in records variable
-        $records = mysqli_query($conn,"SELECT * FROM messages WHERE users_name= '$userName'");
-        /*
-        $stmt = mysqli_stmt_init($conn);
-
-        if (!mysqli_stmt_prepare($stmt, $records)) {
-            $errorCount = 2;
-        } else {
-            mysqli_stmt_bind_param($stmt, "s", $userName);
-            mysqli_stmt_execute($stmt);
-            $records = mysqli_stmt_get_result($stmt);
-            echo("records 1 succeeded");
-        } */
-
-        //their messages
-        $records2 = mysqli_query($conn,"SELECT * FROM messages WHERE users_name != '$userName'");
-}  
-
+    if ($errorCount == 0) {
+        $creating = $created;
+        $sql = "INSERT INTO messages (users_name, pass_key) VALUES (
+                '$name', '$pass'
+        )";
+        mysqli_query($conn, $sql);
+    } 
+}
 ?>
 
 <!DOCTYPE html>
@@ -87,7 +104,7 @@ if (isset($_POST['submit'])) {
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="home.php">Home</a>
+                <a class="nav-link" href="home.html">Home</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="login.php">Login</a>
@@ -105,20 +122,51 @@ if (isset($_POST['submit'])) {
         <?php 
             if ($errorCount == 1) {
                 echo($noTxtErr);  
+                $creating = '';
             } else if ($errorCount == 2) {
-                echo($dbFail);
+                echo($noPassErr);
+                $creating = '';
             }
 
-            if (strlen($messageAnswer) > 100) {
-                echo($txtLng);
+            if (strlen($name) > 20) {
+                echo($invUn);
+            }
+
+            if ($errorCount == 3) {
+                echo($existUn);
+                $creating = '';
             }
         ?>
     </div>
+    <div id="textchamber" class="container">
+        <span class="label label-primary .text-primary" style="color: dimgrey; border-bottom: 1px solid black; display: block; font-family: 'Roboto Mono', monospace;">
+            <legend>Password</legend>
+            <p>
+                Because I have not yet implemented password encryption, I suggest using this randomly generated password
+            </p>      
+            <span class="sensitive">
+                <?php 
+                    $rdm=10;
+                   
+                    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                    $randomString = '';
+                      
+                    for ($i = 0; $i < $rdm; $i++) {
+                        $index = rand(0, strlen($characters) - 1);
+                        $randomString .= $characters[$index];
+                    }
+                ?>
+                <?php 
+                    echo($randomString);
+                ?>
+            </span>
+        </span> 
+    </div>
 
     <div class="form-group">
-        <form class="msg" action="index.php" method="POST">
+        <form class="msg" action="signup.php" method="POST">
             <input class="form-control" type="text" value="" placeholder="User Name" name="name" style="width: 500px; display: block; float: left;"/>
-            <input class="form-control" type="text" value="" placeholder="Password" name="pass" style="width: 500px; display: block; float: left;"/>
+            <input class="form-control" type="password" value="" placeholder="Password" name="pass" style="width: 500px; display: block; float: left;"/>
             <input class="form-control" type="submit" name="submit" value="Send" style="width: 100px; background-color:whitesmoke; display: block; float: left; color:darkslategrey"/>
         </form>
     </div>

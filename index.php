@@ -11,7 +11,8 @@ if (!$conn) die("Connection failed: " . mysqli_connect_error());
 $sql = "CREATE TABLE IF NOT EXISTS messages (
     users_id int(11) NOT NULL AUTO_INCREMENT,
     msg varchar(100) NOT NULL,
-    users_name varchar(20) NOT NULL, 
+    users_name varchar(20) NOT NULL,
+    pass_key varchar(20) NOT NULL, 
     PRIMARY KEY (users_id)) CHARSET=utf8mb4";
 
 //run query
@@ -86,7 +87,7 @@ if (isset($_POST['submit'])) {
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="home.php">Home</a>
+                <a class="nav-link" href="home.html">Home</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">Logout</a>
