@@ -1,4 +1,7 @@
 <?php
+ session_start();
+
+ $_SESSION['un'];
 /*
 ini_set('display_errors', 0);
 error_reporting(E_ERROR | E_WARNING | E_PARSE); */
@@ -37,7 +40,7 @@ if (isset($_POST['submit'])) {
             <span aria-hidden='true'>&times;</span>
             </button>
         </div>";
-    $created = "<div class='alert alert-success alert-dismissible fade show' role='alert'> Account created 
+    $created = "<div class='alert alert-success alert-dismissible fade show' role='alert'> Account created: '$name'
             <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
             <span aria-hidden='true'>&times;</span>
             </button>
@@ -48,7 +51,15 @@ if (isset($_POST['submit'])) {
             </button>
         </div>";
 
-    echo($creating);
+    $canChat = false;
+
+    $goChat = "<div class='alert alert-primary alert-dismissible fade show' role='alert'>  
+                <a href='index.php' >Go to chat </a>
+                <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+                <span aria-hidden='true'>&times;</span>
+                </button>
+            </div>";
+
     if (!empty($name) && !empty($pass)) {
         $records = mysqli_query($conn,"SELECT users_name FROM messages");
         while($data = mysqli_fetch_array($records))
@@ -68,11 +79,12 @@ if (isset($_POST['submit'])) {
     }
 
     if ($errorCount == 0) {
-        $creating = $created;
         $sql = "INSERT INTO messages (users_name, pass_key) VALUES (
                 '$name', '$pass'
         )";
         mysqli_query($conn, $sql);
+        $_SESSION['un'] = $name;
+        $canChat = true;
     } 
 }
 ?>
@@ -138,7 +150,7 @@ if (isset($_POST['submit'])) {
             }
         ?>
     </div>
-    <div id="textchamber" class="container">
+    <div id="signchamber" class="container">
         <span class="label label-primary .text-primary" style="color: dimgrey; border-bottom: 1px solid black; display: block; font-family: 'Roboto Mono', monospace;">
             <legend>Password</legend>
             <p>
@@ -158,6 +170,14 @@ if (isset($_POST['submit'])) {
                 ?>
                 <?php 
                     echo($randomString);
+                ?>
+            </span>
+            <span>
+                <?php
+                     if ($canChat == true) {
+                        echo($created);
+                        echo($goChat);
+                    }
                 ?>
             </span>
         </span> 

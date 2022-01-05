@@ -1,4 +1,8 @@
 <?php
+session_start();
+
+ini_set('display_errors', 0);
+error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
 include("dbinfo.php");
 
@@ -18,18 +22,19 @@ $sql = "CREATE TABLE IF NOT EXISTS messages (
 //run query
 mysqli_query($conn, $sql);
 
+$userName = $_SESSION['un'];
+
 if (isset($_POST['submit'])) {
 
     $messageAnswer = mysqli_real_escape_string($conn, $_POST['msg']);
-    $userName = mysqli_real_escape_string($conn, $_POST['name']);
     $errorCount = 0;
-    $noTxtErr = "<div class='alert alert-danger' role='alert'>Please enter a user name and message! </div>";
+    $noTxtErr = "<div class='alert alert-danger' role='alert'>Please enter message! </div>";
     $txtLng = "<div class='alert alert-danger' role='alert'> Message must be less than 100 characters! </div>";
     $dbFail = "<div class='alert alert-danger' role='alert'> Insertion to database failed, try again... </div>";
     //echo "<script type='text/javascript'>alert('$messageAnswer');</script>";
 
     if (strlen($messageAnswer) < 101) {
-        if (!empty($messageAnswer) && !empty($userName)) {
+        if (!empty($messageAnswer)) {
             $sql = "INSERT INTO messages (msg, users_name) VALUES (
                     '$messageAnswer', '$userName'
             )";
@@ -80,22 +85,23 @@ if (isset($_POST['submit'])) {
 
     <nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
         <a class="navbar-brand" href="index.php">tavis-chat</a>
+        <a class="navbar-brand"><?php  echo($userName);  ?></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="home.html">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Logout</a>
-            </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="home.html">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Logout</a>
+                </li>
             </ul>
             <form class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search users</button>
             </form>
         </div>
     </nav>
@@ -153,7 +159,6 @@ if (isset($_POST['submit'])) {
 
     <div class="form-group">
         <form class="msg" action="index.php" method="POST">
-            <input class="form-control" type="text" value="<?php echo $userName; ?>" placeholder="User Name" name="name" style="width: 200px; float: left;"/>
             <input class="form-control" type="text" value="" name="msg" style="width: 500px; float: left;"/>
             <input class="form-control" type="submit" name="submit" value="Send" style="width: 100px; background-color:whitesmoke; float: left; color:darkslategrey"/>
         </form>
