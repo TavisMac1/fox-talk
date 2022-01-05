@@ -1,6 +1,7 @@
 <?php
-
-include("dbinfo.php");
+ini_set('display_errors', 0);
+error_reporting(E_ERROR | E_WARNING | E_PARSE); 
+include("dbinfo.php"); 
 
 $conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
 
@@ -22,8 +23,10 @@ if (isset($_POST['submit'])) {
     $messageAnswer = mysqli_real_escape_string($conn, $_POST['msg']);
     $userName = mysqli_real_escape_string($conn, $_POST['name']);
     $errorCount = 0;
-    $noTxtErr = "<div class='alert alert-danger' role='alert'>Please enter a user name and message! </div>";
-    $txtLng = "<div class='alert alert-danger' role='alert'> Message must be less than 100 characters! </div>";
+    $noTxtErr = "<div class='alert alert-danger' role='alert'>Please enter a user name! </div>";
+    $invUn = "<div class='alert alert-danger' role='alert'>Invalid username! </div>";
+    $passLng = "<div class='alert alert-danger' role='alert'> Password must be 6 characters! </div>";
+    $wrngPass = "<div class='alert alert-danger' role='alert'>Wrong password! </div>";
     $dbFail = "<div class='alert alert-danger' role='alert'> Insertion to database failed, try again... </div>";
     //echo "<script type='text/javascript'>alert('$messageAnswer');</script>";
 
@@ -55,7 +58,7 @@ if (isset($_POST['submit'])) {
 
         //their messages
         $records2 = mysqli_query($conn,"SELECT * FROM messages WHERE users_name != '$userName'");
-}
+}  
 
 ?>
 
@@ -89,19 +92,18 @@ if (isset($_POST['submit'])) {
                 <a class="nav-link" href="home.php">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Logout</a>
+                <a class="nav-link" href="signup.php">Sign Up</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Login</a>
             </li>
             </ul>
-            <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
         </div>
     </nav>
 
     <div class="header">
         <h1 class="jumbotron">
-            tavis-chat
+            log in
         </h1>
     </div>
     <div>
@@ -118,57 +120,12 @@ if (isset($_POST['submit'])) {
         ?>
     </div>
 
-    <div id="textchamber" class="container">
-        <?php
-            //your messages
-            while($data = mysqli_fetch_array($records))
-            {
-            ?>
-                <span class="label label-primary .text-primary" style="color: dimgrey; border-bottom: 1px solid black; display: block; font-family: 'Roboto Mono', monospace;">
-                    <?php echo($data['users_name']); echo(": "); echo($data['msg']); ?>
-
-                    <form action="index.php" method="POST">
-                        <input value="<?php  echo($data['users_id']);   ?>" type="submit" class="btn btn-danger" name="delete"/>
-                            <?php 
-                                $uIDo = $data['users_id'];
-                            ?>
-                    </form>
-                </span> 
-            
-            <?php 
-                //their messages
-                while($data = mysqli_fetch_array($records2)) {
-                ?>    
-                     <span class="label label-primary .text-primary" style="color:dimgrey; border-bottom: 1px solid black; display: block; font-family: 'Roboto Mono', monospace;">
-                         <?php echo($data['users_name']); echo(": "); echo($data['msg']); ?>
-                     </span>
-                <?php
-                }
-                ?>
-        <?php
-        }
-        ?>
-    </div>
-
     <div class="form-group">
         <form class="msg" action="index.php" method="POST">
-            <input class="form-control" type="text" value="<?php echo $userName; ?>" placeholder="User Name" name="name" style="width: 200px; float: left;"/>
-            <input class="form-control" type="text" value="" name="msg" style="width: 500px; float: left;"/>
-            <input class="form-control" type="submit" name="submit" value="Send" style="width: 100px; background-color:whitesmoke; float: left; color:darkslategrey"/>
+            <input class="form-control" type="text" value="" placeholder="User Name" name="name" style="width: 500px; display: block; float: left;"/>
+            <input class="form-control" type="text" value="" placeholder="Password" name="pass" style="width: 500px; display: block; float: left;"/>
+            <input class="form-control" type="submit" name="submit" value="Send" style="width: 100px; background-color:whitesmoke; display: block; float: left; color:darkslategrey"/>
         </form>
     </div>
 </body>
 </html>
-
-<?php 
-
-    if (isset($_POST['delete'])) {
-        $uIDo = $data['users_id'];
-        $delMsg = "<div class='alert alert-primary' role='alert'> Message deleted </div>";
-        // echo($uIDo);
-        
-        $sql = "DELETE * FROM messages WHERE users_id = '$uIDo'";
-        mysqli_query($conn, $sql); 
-    }
-
-?>

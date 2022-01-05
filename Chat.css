@@ -7,14 +7,27 @@ body {
     bottom: 10px;
   }
 
+  .nochat {
+    position: absolute;
+    justify-content: center;
+  }
+
   #textchamber {
     color: rgb(47, 47, 47); 
-    border: 0.1px solid rgb(71, 71, 71); 
-    border-radius: 20px; 
+    /*border: 0.1px solid rgb(71, 71, 71); 
+    border-radius: 20px; */
     padding: 3px; 
     overflow: scroll;
     overflow-x: hidden;
-    height: 300px;
+    scrollbar-color: #df2929 #e0e0e0;
+    scrollbar-width: thin;
+    height: 400px;
     background-color: rgba(255, 255, 255, 0.815);
     
+  }
+
+  #homechamber {
+    color: rgb(47, 47, 47); 
+    padding: 3px; 
+    background-color: rgba(255, 255, 255, 0.815);
   }
