@@ -1,66 +1,71 @@
 <?php
+ session_start();
+
 ini_set('display_errors', 0);
-error_reporting(E_ERROR | E_WARNING | E_PARSE); 
-include("dbinfo.php"); 
+error_reporting(E_ERROR | E_WARNING | E_PARSE);
+ $_SESSION['un'];
 
-$conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
-
-//check for valid connecton
-if (!$conn) die("Connection failed: " . mysqli_connect_error());
-
-//Create a database table
-$sql = "CREATE TABLE IF NOT EXISTS messages (
-    users_id int(11) NOT NULL AUTO_INCREMENT,
-    msg varchar(100) NOT NULL,
-    users_name varchar(20) NOT NULL,
-    pass_key varchar(20) NOT NULL, 
-    PRIMARY KEY (users_id)) CHARSET=utf8mb4";
-
-//run query
-mysqli_query($conn, $sql);
+include("default.php");
 
 if (isset($_POST['submit'])) {
-
-    $messageAnswer = mysqli_real_escape_string($conn, $_POST['msg']);
-    $userName = mysqli_real_escape_string($conn, $_POST['name']);
+    
+    $name = mysqli_real_escape_string($conn, $_POST['name']);
+    $pass = mysqli_real_escape_string($conn, $_POST['pass']);
     $errorCount = 0;
+    $successCount = 0;
     $noTxtErr = "<div class='alert alert-danger' role='alert'>Please enter a user name! </div>";
+    $noPassErr = "<div class='alert alert-danger' role='alert'>Please enter a valid password! </div>";
     $invUn = "<div class='alert alert-danger' role='alert'>Invalid username! </div>";
-    $passLng = "<div class='alert alert-danger' role='alert'> Password must be 6 characters! </div>";
-    $wrngPass = "<div class='alert alert-danger' role='alert'>Wrong password! </div>";
+    $existUn = "<div class='alert alert-danger' role='alert'> Username already exists, login or create a new account! </div>";
     $dbFail = "<div class='alert alert-danger' role='alert'> Insertion to database failed, try again... </div>";
-    //echo "<script type='text/javascript'>alert('$messageAnswer');</script>";
 
-    if (strlen($messageAnswer) < 101) {
-        if (!empty($messageAnswer) && !empty($userName)) {
-            $sql = "INSERT INTO messages (msg, users_name) VALUES (
-                    '$messageAnswer', '$userName'
-            )";
-            mysqli_query($conn, $sql);
-        } else {
-            $errorCount = 1;
+
+    $created = "<div class='alert alert-success alert-dismissible fade show' role='alert'> Logged in as: '$name'
+            <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+            <span aria-hidden='true'>&times;</span>
+            </button>
+        </div>";
+
+    $canChat = false;
+
+    $goChat = "<div class='alert alert-primary alert-dismissible fade show' role='alert'>  
+                <a href='index.php' >Go to chat </a>
+                <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+                <span aria-hidden='true'>&times;</span>
+                </button>
+            </div>";
+
+    if (!empty($name) && !empty($pass)) {
+        $records = mysqli_query($conn,"SELECT users_name FROM messages");
+        while($data = mysqli_fetch_array($records))
+        {   //echo($name);
+            if ($name == $data['users_name']) {
+                $successCount ++;
+                break;
+            } else {
+                //$errorCount = 3;
+            }
         }
+        $records2 = mysqli_query($conn,"SELECT users_name, pass_key FROM messages WHERE users_name = '$name' AND pass_key = '$pass'");
+        while($data = mysqli_fetch_array($records2))
+        {
+            if ($pass == $data['pass_key']) {
+                //$errorCount = 4;
+                $successCount ++;
+            } 
+        }
+
+    }  else if (empty($name)) {
+        $errorCount = 1;
+    }  else if (empty($pass)) {
+        $errorCount = 2;
     }
 
-       //your messages
-      //run query on all records from database store in records variable
-        $records = mysqli_query($conn,"SELECT * FROM messages WHERE users_name= '$userName'");
-        /*
-        $stmt = mysqli_stmt_init($conn);
-
-        if (!mysqli_stmt_prepare($stmt, $records)) {
-            $errorCount = 2;
-        } else {
-            mysqli_stmt_bind_param($stmt, "s", $userName);
-            mysqli_stmt_execute($stmt);
-            $records = mysqli_stmt_get_result($stmt);
-            echo("records 1 succeeded");
-        } */
-
-        //their messages
-        $records2 = mysqli_query($conn,"SELECT * FROM messages WHERE users_name != '$userName'");
-}  
-
+    if ($successCount == 2) {
+        $_SESSION['un'] = $name;
+        $canChat = true;
+    } 
+}
 ?>
 
 <!DOCTYPE html>
@@ -82,7 +87,7 @@ if (isset($_POST['submit'])) {
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;400&display=swap" rel="stylesheet">
 
     <nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
-        <a class="navbar-brand" href="index.php">tavis-chat</a>
+        <a class="navbar-brand">tavis-chat</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -93,10 +98,10 @@ if (isset($_POST['submit'])) {
                 <a class="nav-link" href="home.html">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="signup.php">Sign Up</a>
+                <a class="nav-link" href="login.php">Login</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="login.php">Login</a>
+                <a class="nav-link" href="logout.php">Logout</a>
             </li>
             </ul>
         </div>
@@ -104,25 +109,47 @@ if (isset($_POST['submit'])) {
 
     <div class="header">
         <h1 class="jumbotron">
-            log in
+            login
         </h1>
     </div>
     <div>
         <?php 
             if ($errorCount == 1) {
                 echo($noTxtErr);  
+                $creating = '';
             } else if ($errorCount == 2) {
-                echo($dbFail);
+                echo($noPassErr);
+                $creating = '';
             }
 
-            if (strlen($messageAnswer) > 100) {
-                echo($txtLng);
+            if ($errorCount == 3) {
+                echo($invUn);
+            }
+
+            if ($errorCount == 4) {
+                echo($noPassErr);
             }
         ?>
     </div>
+    <div id="signchamber" class="container">
+        <span class="label label-primary .text-primary" style="color: dimgrey; border-bottom: 1px solid black; display: block; font-family: 'Roboto Mono', monospace;">
+            <legend>Password</legend>
+            <p>
+                login with username and password
+            </p>      
+            <span>
+                <?php
+                     if ($canChat == true) {
+                        echo($created);
+                        echo($goChat);
+                    }
+                ?>
+            </span>
+        </span> 
+    </div>
 
     <div class="form-group">
-        <form class="msg" action="index.php" method="POST">
+        <form class="msg" action="login.php" method="POST">
             <input class="form-control" type="text" value="" placeholder="User Name" name="name" style="width: 500px; display: block; float: left;"/>
             <input class="form-control" type="password" value="" placeholder="Password" name="pass" style="width: 500px; display: block; float: left;"/>
             <input class="form-control" type="submit" name="submit" value="Send" style="width: 100px; background-color:whitesmoke; display: block; float: left; color:darkslategrey"/>
