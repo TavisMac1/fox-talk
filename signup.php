@@ -66,9 +66,7 @@ if (isset($_POST['submit'])) {
         {
             if ($name == $data['users_name']) {
                 $errorCount = 3;
-            } else {
-                $creating = $created;
-            }
+            } 
         }
     }  else if (empty($name)) {
         $errorCount = 1;
@@ -108,7 +106,7 @@ if (isset($_POST['submit'])) {
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;400&display=swap" rel="stylesheet">
 
     <nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
-        <a class="navbar-brand" href="index.php">tavis-chat</a>
+        <a class="navbar-brand">tavis-chat</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
