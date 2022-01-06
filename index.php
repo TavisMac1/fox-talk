@@ -87,10 +87,13 @@ if (isset($_POST['submit'])) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;400&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@1,700&display=swap" rel="stylesheet">
 
     <nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
-        <a class="navbar-brand" href="index.php">tavis-chat</a>
-        <a class="navbar-brand active" style="color:firebrick"><?php  echo($userName);  ?></a>
+    <a class="navbar-brand" style="color:firebrick"><img id="logo" src="fox.png" /></a>
+        <a class="navbar-brand active" style="color:dodgerblue"><?php  echo($userName);  ?></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -106,15 +109,18 @@ if (isset($_POST['submit'])) {
             </ul>
             <form class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search users</button>
+                <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search rooms</button>
             </form>
         </div>
     </nav>
 
     <div class="header">
-        <h1 class="jumbotron">
-            tavis-chat
-        </h1>
+            <div class="bg"></div>
+            <div class="bg bg2"></div>
+            <div class="bg bg3"></div>  
+            <h1 class="jumbotron" id="jumbo" style="font-family:'Josefin Sans', sans-serif;">
+                fox-talk
+            </h1>
     </div>
     <div>
         <?php 
@@ -136,7 +142,7 @@ if (isset($_POST['submit'])) {
             while($data = mysqli_fetch_array($records))
             {
             ?>
-                <span class="label label-primary .text-primary" style="color: dimgrey; border-bottom: 1px solid black; display: block; font-family: 'Roboto Mono', monospace;">
+                <span class="label label-primary .text-primary" style="color: dodgerblue; border-bottom: 1px solid black; display: block; font-family: 'Roboto Mono', monospace;">
                     <?php echo($data['users_name']); echo(": "); echo($data['msg']); ?>
 
                     <form action="index.php" method="POST">
@@ -151,7 +157,7 @@ if (isset($_POST['submit'])) {
                 //their messages
                 while($data = mysqli_fetch_array($records2)) {
                 ?>    
-                     <span class="label label-primary .text-primary" style="color:dimgrey; border-bottom: 1px solid black; display: block; font-family: 'Roboto Mono', monospace;">
+                     <span class="label label-primary .text-primary" style="color: dodgerblue; border-bottom: 1px solid black; display: block; font-family: 'Roboto Mono', monospace;">
                          <?php echo($data['users_name']); echo(": "); echo($data['msg']); ?>
                      </span>
                 <?php
@@ -160,14 +166,21 @@ if (isset($_POST['submit'])) {
         <?php
         }
         ?>
+         <div class="form-group">
+            <form class="" action="index.php" method="POST">
+                <input class="form-control" type="text" value="" name="msg" style="width: 500px; float: left;"/>
+                <input class="form-control" type="submit" name="submit" value="Send" style="width: 100px; background-color:whitesmoke; float: left; color:darkslategrey"/>
+            </form>
+        </div>
     </div>
 
+    <!--
     <div class="form-group">
         <form class="msg" action="index.php" method="POST">
             <input class="form-control" type="text" value="" name="msg" style="width: 500px; float: left;"/>
             <input class="form-control" type="submit" name="submit" value="Send" style="width: 100px; background-color:whitesmoke; float: left; color:darkslategrey"/>
         </form>
-    </div>
+    </div> -->
 </body>
 </html>
 

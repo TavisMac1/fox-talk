@@ -31,9 +31,12 @@ $goHome = "<div class='alert alert-primary alert-dismissible fade show' role='al
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;400&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@1,700&display=swap" rel="stylesheet"> 
 
     <nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
-        <a class="navbar-brand">tavis-chat</a>
+    <a class="navbar-brand" style="color:firebrick"><img id="logo" src="fox.png" /></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -51,10 +54,14 @@ $goHome = "<div class='alert alert-primary alert-dismissible fade show' role='al
     </nav>
 
     <div class="header">
-        <h1 class="jumbotron">
-            you are logged out
+        <div class="bg"></div>
+        <div class="bg bg2"></div>
+        <div class="bg bg3"></div>  
+        <h1 class="jumbotron" id="jumbo" style="font-family:'Josefin Sans', sans-serif;">
+            you are logged out... cya next time
         </h1>
-    </div>
+        </div>
+    <div>
     <div id="signchamber" class="container">
         <span class="label label-primary .text-primary" style="color: dimgrey; border-bottom: 1px solid black; display: block; font-family: 'Roboto Mono', monospace;">
             <legend>You have logged out</legend>

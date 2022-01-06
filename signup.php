@@ -78,7 +78,7 @@ if (isset($_POST['submit'])) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tavis Chat</title>
+    <title>Fox-Talk</title>
 </head>
 <body>
     <link rel="stylesheet" type="text/css" href="Chat.css">
@@ -88,9 +88,12 @@ if (isset($_POST['submit'])) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;400&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@1,700&display=swap" rel="stylesheet"> 
 
     <nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
-        <a class="navbar-brand">tavis-chat</a>
+    <a class="navbar-brand" style="color:firebrick"><img id="logo" src="fox.png" /></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -108,10 +111,13 @@ if (isset($_POST['submit'])) {
     </nav>
 
     <div class="header">
-        <h1 class="jumbotron">
-            sign up | no email required currently
+        <div class="bg"></div>
+        <div class="bg bg2"></div>
+        <div class="bg bg3"></div>  
+        <h1 class="jumbotron" id="jumbo" style="font-family:'Josefin Sans', sans-serif;">
+            sign up to fox-talk
         </h1>
-    </div>
+        </div>
     <div>
         <?php 
             if ($errorCount == 1) {

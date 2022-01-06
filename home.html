@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tavis Chat</title>
+    <title>Fox-Talk</title>
 </head>
 <body>
     <link rel="stylesheet" type="text/css" href="Chat.css">
@@ -15,9 +15,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;400&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@1,700&display=swap" rel="stylesheet"> 
 
     <nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
-        <a class="navbar-brand" href="index.php">tavis-chat</a>
+        <a class="navbar-brand" style="color:firebrick"><img id="logo" src="fox.png" /></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -38,16 +42,25 @@
     </nav>
 
     <div class="header">
-        <h1 class="jumbotron">
-            tavis-chat
-        </h1>
+            <div class="bg"></div>
+            <div class="bg bg2"></div>
+            <div class="bg bg3"></div>  
+            <h1 class="jumbotron" id="jumbo" style="font-family:'Josefin Sans', sans-serif;">
+                fox-talk
+            </h1>
     </div>
 
     <div id="textchamber" class="container">
         <span class="label label-primary .text-primary" style="color: dimgrey; border-bottom: 1px solid black; display: block; font-family: 'Roboto Mono', monospace;">
             <legend>Work in progress</legend>
             <p>
-                This chat app is being designed by me, tavis. I plan to continue to add onto this, adding chat rooms, user searching and encryption
+                This chat app is being developed by me, tavis. I plan to continue to add onto this. You can view my future features here 
+                <div class='alert alert-primary alert-dismissible fade show' role='alert'>  
+                    <a href='future.html' >Future </a>
+                    <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+                    <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
             </p>       
         </span> 
     </div>
