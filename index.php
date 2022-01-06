@@ -23,6 +23,11 @@ $sql = "CREATE TABLE IF NOT EXISTS messages (
 mysqli_query($conn, $sql);
 
 $userName = $_SESSION['un'];
+$homeURL = "home.html";
+
+if (empty($userName)) {
+    header('Location: '.$homeURL);
+}
 
 if (isset($_POST['submit'])) {
 
@@ -96,7 +101,7 @@ if (isset($_POST['submit'])) {
                     <a class="nav-link" href="home.html">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Logout</a>
+                    <a class="nav-link" href="logout.php">Logout</a>
                 </li>
             </ul>
             <form class="form-inline my-2 my-lg-0">
