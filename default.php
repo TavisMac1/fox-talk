@@ -9,7 +9,7 @@ if (!$conn) die("Connection failed: " . mysqli_connect_error());
 //Create a database table
 $sql = "CREATE TABLE IF NOT EXISTS messages (
     users_id int(11) NOT NULL AUTO_INCREMENT,
-    msg varchar(100) NOT NULL,
+    msg varchar(100),
     users_name varchar(20) NOT NULL,
     pass_key varchar(20) NOT NULL, 
     PRIMARY KEY (users_id)) CHARSET=utf8mb4";

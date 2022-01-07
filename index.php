@@ -4,23 +4,7 @@ session_start();
 ini_set('display_errors', 0);
 error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
-include("dbinfo.php");
-
-$conn = mysqli_connect($db_host, $db_user, $db_pass, $db_name);
-
-//check for valid connecton
-if (!$conn) die("Connection failed: " . mysqli_connect_error());
-
-//Create a database table
-$sql = "CREATE TABLE IF NOT EXISTS messages (
-    users_id int(11) NOT NULL AUTO_INCREMENT,
-    msg varchar(100) NOT NULL,
-    users_name varchar(20) NOT NULL,
-    pass_key varchar(20) NOT NULL, 
-    PRIMARY KEY (users_id)) CHARSET=utf8mb4";
-
-//run query
-mysqli_query($conn, $sql);
+include("default.php");
 
 $userName = $_SESSION['un'];
 $homeURL = "home.html";
@@ -40,8 +24,8 @@ if (isset($_POST['submit'])) {
 
     if (strlen($messageAnswer) < 101) {
         if (!empty($messageAnswer)) {
-            $sql = "INSERT INTO messages (msg, users_name) VALUES (
-                    '$messageAnswer', '$userName'
+            $sql = "INSERT INTO messages (msg, users_name, pass_key) VALUES (
+                    '$messageAnswer', '$userName', '1234'
             )";
             mysqli_query($conn, $sql);
         } else {
