@@ -7,6 +7,7 @@ error_reporting(E_ERROR | E_WARNING | E_PARSE);
 include("default.php");
 
 $userName = $_SESSION['un'];
+$pass = $_SESSION['pun'];
 $homeURL = "home.html";
 
 if (empty($userName)) {
@@ -25,7 +26,7 @@ if (isset($_POST['submit'])) {
     if (strlen($messageAnswer) < 101) {
         if (!empty($messageAnswer)) {
             $sql = "INSERT INTO messages (msg, users_name, pass_key) VALUES (
-                    '$messageAnswer', '$userName', '1234'
+                    '$messageAnswer', '$userName', '$pass'
             )";
             mysqli_query($conn, $sql);
         } else {
@@ -33,9 +34,21 @@ if (isset($_POST['submit'])) {
         }
     }
 
+
+        //generate a random image to use as the avatar
+        $rdm=10;
+       
+        $avatars = array("fox1.png", "fox-2.png", "fox-3.png");
+        $tstAvt = 'fox-2.png';
+        $rndmAv = '';
+          
+        for ($i = 0; $i < count($avatars); $i++) {
+            $rndmAv = array_rand($avatars, 1);
+        }
+
        //your messages
       //run query on all records from database store in records variable
-        $records = mysqli_query($conn,"SELECT * FROM messages WHERE users_name= '$userName'");
+        $records = mysqli_query($conn,"SELECT * FROM messages WHERE users_name= '$userName' AND msg != ''");
         /*
         $stmt = mysqli_stmt_init($conn);
 
@@ -49,7 +62,7 @@ if (isset($_POST['submit'])) {
         } */
 
         //their messages
-        $records2 = mysqli_query($conn,"SELECT * FROM messages WHERE users_name != '$userName'");
+        $records2 = mysqli_query($conn,"SELECT * FROM messages WHERE users_name != '$userName' AND msg != ''");
 }
 
 ?>
@@ -127,10 +140,10 @@ if (isset($_POST['submit'])) {
             {
             ?>
                 <span class="label label-primary .text-primary" style="color: dodgerblue; border-bottom: 1px solid black; display: block; font-family: 'Roboto Mono', monospace;">
+                    <img id="avatar" src="<?php echo($tstAvt); ?>" >
                     <?php echo($data['users_name']); echo(": "); echo($data['msg']); ?>
-
                     <form action="index.php" method="POST">
-                        <input value="<?php  echo($data['users_id']);   ?>" type="submit" class="btn btn-danger" name="delete"/>
+                        <input value="delete msg: <?php  echo($data['users_id']);?>" type="submit" class="btn btn-danger" name="delete"/>
                             <?php 
                                 $uIDo = $data['users_id'];
                             ?>
@@ -157,25 +170,23 @@ if (isset($_POST['submit'])) {
             </form>
         </div>
     </div>
-
-    <!--
-    <div class="form-group">
-        <form class="msg" action="index.php" method="POST">
-            <input class="form-control" type="text" value="" name="msg" style="width: 500px; float: left;"/>
-            <input class="form-control" type="submit" name="submit" value="Send" style="width: 100px; background-color:whitesmoke; float: left; color:darkslategrey"/>
-        </form>
-    </div> -->
 </body>
 </html>
 
 <?php 
 
     if (isset($_POST['delete'])) {
-        $uIDo = $data['users_id'];
         $delMsg = "<div class='alert alert-primary' role='alert'> Message deleted </div>";
         // echo($uIDo);
+
+        /*ß
+        $records = mysqli_query($conn,"SELECT msg FROM messages WHERE users_name= '$userName' AND msg != ''");
+        while($data = mysqli_fetch_array($records))
+        {
+            $uIDo = $data['users_id'];
         
-        $sql = "DELETE * FROM messages WHERE users_id = '$uIDo'";
+        } */
+        $sql = "DELETE msg FROM messages WHERE users_id = '$uIDo'";
         mysqli_query($conn, $sql); 
     }
 

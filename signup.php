@@ -4,6 +4,7 @@ ini_set('display_errors', 0);
 error_reporting(E_ERROR | E_WARNING | E_PARSE); 
  
 $_SESSION['un'];
+$_SESSION['pun'];
 
 include("default.php");
 
@@ -66,6 +67,7 @@ if (isset($_POST['submit'])) {
         )";
         mysqli_query($conn, $sql);
         $_SESSION['un'] = $name;
+        $_SESSION['pun'] = $pass;
         $canChat = true;
     } 
 }
